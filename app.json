@@ -1,4 +1,35 @@
 {
   "name": "GoOffline",
-  "displayName": "GoOffline"
+  "displayName": "GoOffline",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "icon": "./assets/GoOffline.png",
+  "userInterfaceStyle": "light",
+  "ios": {
+    "supportsTablet": true,
+    "infoPlist": {
+      "UIBackgroundModes": [
+        "audio"
+      ]
+    },
+    "bundleIdentifier": "com.printn.GoOffline"
+  },
+  "android": {
+    "playServicesVersion": "latest",
+    "permissions": [
+      "READ_EXTERNAL_STORAGE",
+      "WRITE_EXTERNAL_STORAGE",
+      "RECORD_AUDIO",
+      "MANAGE_EXTERNAL_STORAGE"
+    ],
+    "config": {
+      "playback": {
+        "playbackMode": "BACKGROUND"
+      }
+    },
+    "package": "com.printn.GoOffline"
+  },
+  "web": {
+    "favicon": "./assets/favicon.png"
+  }
 }

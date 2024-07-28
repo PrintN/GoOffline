@@ -1,79 +1,54 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# GoOffline App
+GoOffline is a user-friendly mobile application designed to keep you connected and productive, even when you're offline. Whether you need to convert units, track your internet connection status, or manage your tasks, GoOffline has got you covered. With its intuitive design, ensuring you have the tools you need at your fingertips.
 
-# Getting Started
+## Tools
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+- ### Music Player
+- ### Compass
+- ### Unit Converter
+- ### Currency Converter
+- ### Tic Tac Toe
+- ### Guess The Number
 
-## Step 1: Start the Metro Server
+### Tools and Libraries Used
+- **React Native**: The core framework used to build the app.
+- **react-native-vector-icons/Ionicons**: For using Ionicons as icons in the app.
+- **@react-native-community/netinfo**: To detect and handle internet connectivity status.
+- **react-native-modal-selector**: For implementing the modal selectors used in unit conversion.
+- **Animated API**: For adding smooth animations to the connectivity status indicator.
+- **react-native-document-picker**: For selecting and importing audio files from the device.
+- **react-native-sound**: For playing and controlling audio files.
+- **react-native-fs**: For handling file system operations, such as copying audio files to a specific directory.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Installation
+### Option 1: Download from Latest Release
+1. **Download the Latest Release**: Go to the Releases page and download the latest version of the app.
+2. **Install the App**: Follow the instructions provided in the release notes to install the downloaded app on your device.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### Option 2: Run from Source
+### Prerequisites
+- **Node.js**: Ensure you have Node.js installed on your machine.
+- **React Native CLI**: Install the React Native CLI if you haven't already.
+- **Android Studio/Xcode**: For running the app on an Android or iOS emulator.
 
-```bash
-# using npm
-npm start
+### Steps
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/PrintN/GoOffline.git
+   cd GoOffline
+2. **Install Dependencies**:
+   ```bash
+   npm install
+3. **Start the Metro Bundler**:
+   ```bash
+   npx react-native start
+4. **Run the App**:
+   ```bash
+   npx react-native run-android
+   Or
+   npx react-native run-ios
+## Contributing
+We welcome contributions to enhance the GoOffline app. If you have suggestions or want to report an issue, please create a pull request or open an issue on our GitHub repository.
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## License
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. See the [LICENSE](LICENSE) file for details.
