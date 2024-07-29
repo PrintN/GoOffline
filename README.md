@@ -51,4 +51,4 @@ GoOffline is a user-friendly mobile application designed to keep you connected a
 We welcome contributions to enhance the GoOffline app. If you have suggestions or want to report an issue, please create a pull request or open an issue on our GitHub repository.
 
 ## License
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL-3.0 license. See the [LICENSE](LICENSE) file for details.
