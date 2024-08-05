@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Button, Alert, AppState } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { Text, View, FlatList, Image, TouchableOpacity, Alert, AppState } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import Sound from 'react-native-sound';
 import RNFS from 'react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemeContext } from '../ThemeContext';
+
+const STORAGE_KEY = 'songsList';
 
 const HomeScreen = () => {
   const [songs, setSongs] = useState([]);
@@ -13,8 +17,26 @@ const HomeScreen = () => {
   const [playbackDuration, setPlaybackDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const { theme } = useContext(ThemeContext);
+
   useEffect(() => {
-    const appStateListener = AppState.addEventListener('change', handleAppStateChange);
+    const loadSongs = async () => {
+      try {
+        const savedSongs = await AsyncStorage.getItem(STORAGE_KEY);
+        if (savedSongs) {
+          setSongs(JSON.parse(savedSongs));
+        }
+      } catch (error) {
+        console.error('Failed to load songs from storage:', error);
+      }
+    };
+
+    loadSongs();
+
+    const appStateListener = AppState.addEventListener(
+      'change',
+      handleAppStateChange
+    );
 
     return () => {
       appStateListener.remove();
@@ -28,7 +50,7 @@ const HomeScreen = () => {
     if (sound) {
       const interval = setInterval(() => {
         sound.getCurrentTime((seconds) => {
-          setPlaybackPosition(seconds * 1000); // Convert to milliseconds
+          setPlaybackPosition(seconds * 1000);
         });
       }, 1000);
 
@@ -36,10 +58,22 @@ const HomeScreen = () => {
     }
   }, [sound]);
 
+  useEffect(() => {
+    const saveSongs = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(songs));
+      } catch (error) {
+        console.error('Failed to save songs to storage:', error);
+      }
+    };
+
+    saveSongs();
+  }, [songs]);
+
   const handleAppStateChange = (nextAppState) => {
     if (nextAppState === 'background') {
       if (sound && isPlaying) {
-        sound.pause();
+        sound.play();
       }
     } else if (nextAppState === 'active') {
       if (sound && !isPlaying) {
@@ -54,65 +88,73 @@ const HomeScreen = () => {
 
   const importSong = async () => {
     try {
-      const result = await DocumentPicker.pick({
+      const results = await DocumentPicker.pick({
         type: [DocumentPicker.types.audio],
+        allowMultiSelection: true,
       });
-
-      if (result && result.length > 0) {
-        const { uri, name } = result[0];
-        const destPath = `${RNFS.DocumentDirectoryPath}/${name}`;
-        await RNFS.copyFile(uri, destPath);
-
-        setSongs([...songs, { id: generateUniqueId(), title: name, uri: destPath }]);
+  
+      if (results && results.length > 0) {
+        const newSongs = await Promise.all(
+          results.map(async (result) => {
+            const { uri, name } = result;
+            const destPath = `${RNFS.DocumentDirectoryPath}/${name}`;
+            await RNFS.copyFile(uri, destPath);
+  
+            return { id: generateUniqueId(), title: name, uri: destPath };
+          })
+        );
+  
+        setSongs((prevSongs) => [...prevSongs, ...newSongs]);
       } else {
-        Alert.alert('Cancelled', 'No file selected');
+        Alert.alert('Cancelled', 'No files selected');
       }
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {
-        Alert.alert('Cancelled', 'No file selected');
+        Alert.alert('Cancelled', 'No files selected');
       } else {
-        console.error('Error importing file:', error);
-        Alert.alert('Error', 'An error occurred while importing the file.');
+        console.error('Error importing files:', error);
+        Alert.alert('Error', 'An error occurred while importing the files.');
       }
     }
-  };
+  };  
 
   const playSong = (index) => {
     const song = songs[index];
     if (!song) return;
-
+  
     if (sound) {
       sound.release();
     }
-
+  
     const newSound = new Sound(song.uri, '', (error) => {
       if (error) {
         console.error('Error playing sound:', error);
         Alert.alert('Error', 'An error occurred while playing the sound.');
         return;
       }
-
+  
       setSound(newSound);
       setPlayingIndex(index);
       setPlaybackPosition(0);
-      setPlaybackDuration(newSound.getDuration() * 1000); // Convert to milliseconds
+      setPlaybackDuration(newSound.getDuration() * 1000);
       setIsPlaying(true);
-
+  
       newSound.play((success) => {
         if (success) {
-          setPlayingIndex(null);
-          setIsPlaying(false);
+          const nextIndex = (index + 1) % songs.length; 
+          playSong(nextIndex);
         } else {
           console.error('Playback failed due to audio decoding errors');
           Alert.alert('Error', 'An error occurred during playback.');
         }
       });
-
+  
       newSound.getCurrentTime((seconds) => {
-        setPlaybackPosition(seconds * 1000); // Convert to milliseconds
+        setPlaybackPosition(seconds * 1000); 
       });
     });
   };
+  
 
   const pauseSong = () => {
     if (sound) {
@@ -130,17 +172,20 @@ const HomeScreen = () => {
 
   const skipForward = () => {
     if (sound) {
-      const newPosition = Math.min((playbackPosition / 1000) + 15, playbackDuration / 1000); // Convert to seconds
+      const newPosition = Math.min(
+        playbackPosition / 1000 + 15,
+        playbackDuration / 1000
+      );
       sound.setCurrentTime(newPosition);
-      setPlaybackPosition(newPosition * 1000); // Convert back to milliseconds
+      setPlaybackPosition(newPosition * 1000);
     }
   };
 
   const skipBack = () => {
     if (sound) {
-      const newPosition = Math.max((playbackPosition / 1000) - 15, 0); // Convert to seconds
+      const newPosition = Math.max(playbackPosition / 1000 - 15, 0); 
       sound.setCurrentTime(newPosition);
-      setPlaybackPosition(newPosition * 1000); // Convert back to milliseconds
+      setPlaybackPosition(newPosition * 1000); 
     }
   };
 
@@ -196,32 +241,37 @@ const HomeScreen = () => {
   };
 
   const renderSong = ({ item, index }) => (
-    <View style={styles.songContainer}>
+    <View style={theme.songContainer}>
       <TouchableOpacity
-        style={styles.moveButton}
+        style={theme.moveButton}
         onPress={() => moveSong(index, 'up')}
         disabled={index === 0}
       >
         <Ionicons name="arrow-up" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.moveButton}
+        style={theme.moveButton}
         onPress={() => moveSong(index, 'down')}
         disabled={index === songs.length - 1}
       >
         <Ionicons name="arrow-down" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.songContent}
+        style={theme.songContent}
         onPress={() => playSong(index)}
-        onLongPress={() => removeSong(index)} // Long press to remove song
+        onLongPress={() => removeSong(index)} 
       >
         <Image
-          style={styles.albumArt}
-          source={{ uri: 'https://via.placeholder.com/60' }} // Placeholder image URL
+          style={theme.albumArt}
+          source={{ uri: 'https://via.placeholder.com/60' }} 
         />
-        <View style={styles.songDetails}>
-          <Text style={[styles.songTitle, playingIndex === index && styles.currentSong]}>
+        <View style={theme.songDetails}>
+          <Text
+            style={[
+              theme.songTitle,
+              playingIndex === index && theme.currentSong,
+            ]}
+          >
             {item.title}
           </Text>
         </View>
@@ -230,86 +280,39 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Button title="Import Song" onPress={importSong} />
+    <View style={theme.container}>
+      <TouchableOpacity style={theme.button} onPress={importSong}>
+        <Text style={theme.buttonText}>Import Songs</Text>
+      </TouchableOpacity>
       <FlatList
         data={songs}
         renderItem={renderSong}
         keyExtractor={(item) => item.id}
-        style={styles.songList}
+        style={theme.songList}
       />
-      <View style={styles.playerBar}>
+      <View style={theme.playerBar}>
         <TouchableOpacity onPress={skipBack}>
-          <Ionicons name="play-back" size={24} color="white" />
+          <Ionicons name="play-back" size={24} style={theme.playerBarButton} />
         </TouchableOpacity>
         <TouchableOpacity onPress={skipToPreviousSong}>
-          <Ionicons name="play-skip-back" size={24} color="white" />
+          <Ionicons name="play-skip-back" size={24} style={theme.playerBarButton} />
         </TouchableOpacity>
         <TouchableOpacity onPress={isPlaying ? pauseSong : resumeSong}>
           <Ionicons
             name={isPlaying ? 'pause' : 'play'}
             size={24}
-            color="white"
+            style={theme.playerBarButton}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={skipToNextSong}>
-          <Ionicons name="play-skip-forward" size={24} color="white" />
+          <Ionicons name="play-skip-forward" size={24} style={theme.playerBarButton} />
         </TouchableOpacity>
         <TouchableOpacity onPress={skipForward}>
-          <Ionicons name="play-forward" size={24} color="white" />
+          <Ionicons name="play-forward" size={24} style={theme.playerBarButton} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-  },
-  songList: {
-    flex: 1,
-  },
-  songContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderBottomColor: '#444',
-    borderBottomWidth: 1,
-  },
-  moveButton: {
-    marginHorizontal: 5,
-  },
-  songContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  albumArt: {
-    width: 60,
-    height: 60,
-    borderRadius: 4,
-  },
-  songDetails: {
-    marginLeft: 10,
-    justifyContent: 'center',
-  },
-  songTitle: {
-    color: 'white',
-    fontSize: 16,
-  },
-  currentSong: {
-    color: '#3EE723', // Color for the currently playing song
-  },
-  playerBar: {
-    height: 70,
-    backgroundColor: '#1DB954',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 20,
-  },
-});
 
 export default HomeScreen;

@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import { ThemeContext } from './ThemeContext'; // Import only ThemeContext
 
 const HomeScreen: React.FC = () => {
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const animation = useRef(new Animated.Value(1)).current;
+
+  // Extract theme from the ThemeContext
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -41,14 +45,14 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.statusContainer}>
-        <Text style={styles.text}>
+    <View style={theme.containerHomeScreen}>
+      <View style={theme.statusContainerHomeScreen}>
+        <Text style={theme.textHomeScreen}>
           {isConnected ? 'You are currently online' : 'You are currently offline'}
         </Text>
         <Animated.View
           style={[
-            styles.circle,
+            theme.circleHomeScreen,
             { backgroundColor: isConnected ? 'green' : 'red' },
             animatedStyle,
           ]}
@@ -57,28 +61,5 @@ const HomeScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-    marginRight: 10,
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 15,
-  },
-});
 
 export default HomeScreen;

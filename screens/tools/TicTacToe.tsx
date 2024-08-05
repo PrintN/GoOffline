@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { ThemeContext } from '../ThemeContext';
 
 const initialBoard = Array(9).fill(null);
 
@@ -10,6 +11,8 @@ const TicTacToeScreen: React.FC = () => {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const winner = calculateWinner(board);
   const isTie = !winner && board.every(cell => cell !== null);
+
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     if (gameMode === 'bot' && !isXNext && !winner && !isTie) {
@@ -126,7 +129,7 @@ const TicTacToeScreen: React.FC = () => {
   const renderSquare = (index: number) => (
     <TouchableOpacity
       key={index}
-      style={styles.square}
+      style={theme.squareTicTacToe}
       onPress={() => {
         if (gameMode === 'player' || (gameMode === 'bot' && isXNext)) {
           handlePress(index);
@@ -134,7 +137,7 @@ const TicTacToeScreen: React.FC = () => {
       }}
       disabled={board[index] !== null || winner !== null || isTie}
     >
-      <Text style={styles.text}>{board[index]}</Text>
+      <Text style={theme.textTicTacToe}>{board[index]}</Text>
     </TouchableOpacity>
   );
 
@@ -157,12 +160,12 @@ const TicTacToeScreen: React.FC = () => {
 
   if (gameMode === 'none') {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Tic Tac Toe</Text>
-        <TouchableOpacity style={styles.button} onPress={() => startGame('player')}>
-          <Text style={styles.buttonText}>Player vs Player</Text>
+      <View style={theme.containerTicTacToe}>
+        <Text style={theme.titleTicTacToe}>Tic Tac Toe</Text>
+        <TouchableOpacity style={theme.buttonTicTacToe} onPress={() => startGame('player')}>
+          <Text style={theme.buttonTextTicTacToe}>Player vs Player</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {
+        <TouchableOpacity style={theme.buttonTicTacToe} onPress={() => {
           Alert.alert(
             'Select Difficulty',
             '',
@@ -174,23 +177,23 @@ const TicTacToeScreen: React.FC = () => {
             ]
           );
         }}>
-          <Text style={styles.buttonText}>Player vs Bot</Text>
+          <Text style={theme.buttonTextTicTacToe}>Player vs Bot</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.status}>{status}</Text>
+    <View style={theme.containerTicTacToe}>
+      <Text style={theme.statusTicTacToe}>{status}</Text>
       {(winner || isTie) && (
-        <TouchableOpacity style={styles.button} onPress={() => startGame(gameMode)}>
-          <Text style={styles.buttonText}>Restart</Text>
+        <TouchableOpacity style={theme.buttonTicTacToe} onPress={() => startGame(gameMode)}>
+          <Text style={theme.buttonTextTicTacToe}>Restart</Text>
         </TouchableOpacity>
       )}
-      <View style={styles.board}>
+      <View style={theme.boardTicTacToe}>
         {[0, 1, 2].map((row) => (
-          <View style={styles.row} key={row}>
+          <View style={theme.rowTicTacToe} key={row}>
             {[0, 1, 2].map((col) => renderSquare(row * 3 + col))}
           </View>
         ))}
@@ -218,28 +221,5 @@ const calculateWinner = (squares: string[]): string | null => {
   }
   return null;
 };
-
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' },
-    board: { flexDirection: 'column' },
-    row: { flexDirection: 'row' },
-    square: {
-      width: 100, height: 100, justifyContent: 'center', alignItems: 'center',
-      borderWidth: 1, borderColor: '#1DB954', backgroundColor: '#1F1B24'
-    },
-    text: { fontSize: 24, fontWeight: 'bold', color: '#1DB954' },
-    status: { fontSize: 20, marginBottom: 20, color: '#1DB954' },
-    title: { fontSize: 34, marginBottom: 20, color: '#1DB954', fontWeight: 'bold', },
-    buttonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      backgroundColor: '#1DB954',
-      padding: 10,
-      margin: 10,
-      borderRadius: 5
-    }
-  });
 
 export default TicTacToeScreen;

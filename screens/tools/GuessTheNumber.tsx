@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ThemeContext } from '../ThemeContext';
 
 const GuessTheNumberScreen: React.FC = () => {
   const [numberToGuess, setNumberToGuess] = useState<number>(Math.floor(Math.random() * 100) + 1);
   const [guess, setGuess] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  
+  const { theme } = useContext(ThemeContext);
 
   const handleGuess = () => {
     const guessNumber = parseInt(guess);
@@ -23,38 +26,21 @@ const GuessTheNumberScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Guess the Number</Text>
+    <View style={theme.containerGuessTheNumber}>
+      <Text style={theme.titleGuessTheNumber}>Guess the Number</Text>
       <TextInput
-        style={styles.input}
+        style={theme.inputGuessTheNumber}
         keyboardType="numeric"
         placeholder="Enter your guess"
         value={guess}
         onChangeText={setGuess}
       />
-      <TouchableOpacity style={styles.button} onPress={handleGuess}>
-        <Text style={styles.buttonText}>Submit Guess</Text>
+      <TouchableOpacity style={theme.buttonGuessTheNumber} onPress={handleGuess}>
+        <Text style={theme.buttonTextGuessTheNumber}>Submit Guess</Text>
       </TouchableOpacity>
-      <Text style={styles.message}>{message}</Text>
+      <Text style={theme.messageGuessTheNumber}>{message}</Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' },
-  title: { fontSize: 34, color: '#1DB954', marginBottom: 20, fontWeight: 'bold' },
-  input: { backgroundColor: 'white', padding: 10, marginBottom: 20, width: '80%', borderRadius: 5, color: 'black' },
-  message: { color: 'white', fontSize: 20 },
-  button: {
-    backgroundColor: '#1DB954',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  }
-});
 
 export default GuessTheNumberScreen;

@@ -1,25 +1,34 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useContext } from 'react';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemeContext, standardTheme, darkTheme, lightTheme } from './ThemeContext'; // Import themes
 
 const SettingsScreen: React.FC = () => {
+  const { theme, setTheme } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Settings (Coming Soon)</Text>
+    <View style={theme.containerSettingsScreen}>
+      <Text style={theme.titleSettingsScreen}>Settings</Text>
+      <Text style={theme.subtitleSettingsScreen}>Choose a Theme</Text>
+      <TouchableOpacity
+        style={[theme.button, { backgroundColor: theme.standardButtonColor }]}
+        onPress={() => setTheme(standardTheme)}
+      >
+        <Text style={theme.buttonTextSettingsScreen}>Standard Theme</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[theme.button, { backgroundColor: theme.darkButtonColor }]}
+        onPress={() => setTheme(darkTheme)}
+      >
+        <Text style={theme.buttonTextSettingsScreen}>Dark Theme</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[theme.button, { backgroundColor: theme.lightButtonColor }]}
+        onPress={() => setTheme(lightTheme)}
+      >
+        <Text style={theme.buttonTextSettingsScreen}>Light Theme</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-  },
-});
 
 export default SettingsScreen;

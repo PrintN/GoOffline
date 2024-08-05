@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import ModalSelector from 'react-native-modal-selector';
+import { ThemeContext } from '../ThemeContext';
 
-const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
+const currencies = [
+  'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
+  'KRW', 'MXN', 'SGD', 'HKD', 'NOK', 'INR', 'BRL', 'RUB', 'TRY', 'ZAR'
+];
 
 const exchangeRates = {
   USD: 1,
-  EUR: 0.85,
-  GBP: 0.75,
-  JPY: 110,
-  AUD: 1.4,
-  CAD: 1.25,
-  CHF: 0.91,
-  CNY: 6.45,
-  SEK: 8.6,
-  NZD: 1.5,
+  EUR: 0.93,
+  GBP: 0.77,
+  JPY: 144.68,
+  AUD: 1.49,
+  CAD: 1.35,
+  CHF: 0.87,
+  CNY: 7.27,
+  SEK: 10.71,
+  NZD: 1.59,
+  KRW: 1314.45,
+  MXN: 18.06,
+  SGD: 1.35,
+  HKD: 7.85,
+  NOK: 10.48,
+  INR: 83.43,
+  BRL: 5.15,
+  RUB: 95.72,
+  TRY: 27.20,
+  ZAR: 19.25,
 };
 
 const CurrencyConverterScreen: React.FC = () => {
@@ -22,6 +36,8 @@ const CurrencyConverterScreen: React.FC = () => {
   const [toCurrency, setToCurrency] = useState('EUR');
   const [inputValue, setInputValue] = useState('');
   const [convertedValue, setConvertedValue] = useState('');
+
+  const { theme } = useContext(ThemeContext);
 
   const handleConvert = () => {
     const value = parseFloat(inputValue);
@@ -34,10 +50,10 @@ const CurrencyConverterScreen: React.FC = () => {
   const currencyOptions = currencies.map(currency => ({ key: currency, label: currency }));
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Currency Converter</Text>
+    <View style={theme.containerConverter}>
+      <Text style={theme.titleConverter}>Currency Converter</Text>
       <TextInput
-        style={styles.input}
+        style={theme.inputConverter}
         keyboardType="numeric"
         placeholder="Enter value"
         value={inputValue}
@@ -47,103 +63,31 @@ const CurrencyConverterScreen: React.FC = () => {
         data={currencyOptions}
         initValue={fromCurrency}
         onChange={(option) => setFromCurrency(option.key)}
-        style={styles.picker}
-        selectTextStyle={styles.pickerText}
-        overlayStyle={styles.pickerOverlay}
-        optionTextStyle={styles.pickerOptionText}
-        cancelTextStyle={styles.pickerCancelText}
-        selectStyle={styles.pickerSelect}
+        style={theme.pickerConverter}
+        selectTextStyle={theme.pickerTextConverter}
+        overlayStyle={theme.pickerOverlayConverter}
+        optionTextStyle={theme.pickerOptionTextConverter}
+        cancelTextStyle={theme.pickerCancelTextConverter}
+        selectStyle={theme.pickerSelectConverter}
       />
-      <Text style={styles.text}>To</Text>
+      <Text style={theme.textConverter}>To</Text>
       <ModalSelector
         data={currencyOptions}
         initValue={toCurrency}
         onChange={(option) => setToCurrency(option.key)}
-        style={styles.picker}
-        selectTextStyle={styles.pickerText}
-        overlayStyle={styles.pickerOverlay}
-        optionTextStyle={styles.pickerOptionText}
-        cancelTextStyle={styles.pickerCancelText}
-        selectStyle={styles.pickerSelect}
+        style={theme.pickerConverter}
+        selectTextStyle={theme.pickerTextConverter}
+        overlayStyle={theme.pickerOverlayConverter}
+        optionTextStyle={theme.pickerOptionTextConverter}
+        cancelTextStyle={theme.pickerCancelTextConverter}
+        selectStyle={theme.pickerSelectConverter}
       />
-      <TouchableOpacity style={styles.button} onPress={handleConvert}>
-        <Text style={styles.buttonText}>Convert</Text>
+      <TouchableOpacity style={theme.buttonConverter} onPress={handleConvert}>
+        <Text style={theme.buttonTextConverter}>Convert</Text>
       </TouchableOpacity>
-      {convertedValue !== '' && <Text style={styles.result}>{convertedValue}</Text>}
+      {convertedValue !== '' && <Text style={theme.resultConverter}>{convertedValue}</Text>}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    color: '#1DB954',
-    fontSize: 34,
-    marginBottom: 20,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  text: {
-    marginBottom: 15,
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  input: {
-    backgroundColor: 'white',
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 5,
-    color: 'black'
-  },
-  result: {
-    color: 'white',
-    fontSize: 20,
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#1DB954',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  picker: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  pickerText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  pickerSelect: {
-    borderWidth: 1,
-    borderColor: '#1DB954',
-    borderRadius: 5,
-    padding: 10,
-  },
-  pickerOptionText: {
-    color: 'black',
-    fontSize: 16,
-  },
-  pickerCancelText: {
-    color: '#1DB954',
-    fontSize: 16,
-  },
-  pickerOverlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-});
 
 export default CurrencyConverterScreen;
