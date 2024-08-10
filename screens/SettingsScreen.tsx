@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { ThemeContext, standardTheme, darkTheme, lightTheme } from './ThemeContext'; // Import themes
 
 const SettingsScreen: React.FC = () => {
@@ -10,19 +10,19 @@ const SettingsScreen: React.FC = () => {
       <Text style={theme.titleSettingsScreen}>Settings</Text>
       <Text style={theme.subtitleSettingsScreen}>Choose a Theme</Text>
       <TouchableOpacity
-        style={[theme.button, { backgroundColor: theme.standardButtonColor }]}
+        style={theme.buttonSettingsScreen}
         onPress={() => setTheme(standardTheme)}
       >
         <Text style={theme.buttonTextSettingsScreen}>Standard Theme</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[theme.button, { backgroundColor: theme.darkButtonColor }]}
+        style={theme.buttonSettingsScreen}
         onPress={() => setTheme(darkTheme)}
       >
         <Text style={theme.buttonTextSettingsScreen}>Dark Theme</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[theme.button, { backgroundColor: theme.lightButtonColor }]}
+        style={theme.buttonSettingsScreen}
         onPress={() => setTheme(lightTheme)}
       >
         <Text style={theme.buttonTextSettingsScreen}>Light Theme</Text>

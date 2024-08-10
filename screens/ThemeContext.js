@@ -1,5 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Retrieve device width
 const { width } = Dimensions.get('window');
@@ -155,17 +156,18 @@ export const standardTheme = {
     marginBottom: 30,
   },
   buttonSettingsScreen: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
+    backgroundColor: '#333',
     borderRadius: 10,
-    marginVertical: 10,
-    width: '80%',
+    padding: 20,
+    width: 250,
+    margin: 10,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    justifyContent: 'center',
     elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   buttonTextSettingsScreen: {
     fontSize: 18,
@@ -184,7 +186,8 @@ export const standardTheme = {
     borderBottomWidth: 1,
   },
   moveButton: {
-    marginHorizontal: 5,
+    marginHorizontal: 3,
+    color: 'white'
   },
   songContent: {
     flexDirection: 'row',
@@ -614,17 +617,20 @@ export const darkTheme = {
     marginBottom: 30,
   },
   buttonSettingsScreen: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
+    backgroundColor: '#000',
     borderRadius: 10,
-    marginVertical: 10,
-    width: '80%',
+    borderColor: '#fff',
+    borderWidth: 1,
+    padding: 20,
+    width: 250,
+    margin: 9,
     alignItems: 'center',
-    shadowColor: '#fff',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    justifyContent: 'center',
     elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   buttonTextSettingsScreen: {
     fontSize: 18,
@@ -643,7 +649,8 @@ export const darkTheme = {
     borderBottomWidth: 1,
   },
   moveButton: {
-    marginHorizontal: 5,
+    marginHorizontal: 3,
+    color: 'white'
   },
   songContent: {
     flexDirection: 'row',
@@ -966,7 +973,7 @@ export const lightTheme = {
   },
   titleTranslationScreen: {
     color: 'black',
-    fontSize: 24,
+    fontSize: 32,
     marginBottom: 20,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -975,7 +982,7 @@ export const lightTheme = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    width: '100%',
+    width: width * 0.9,
   },
   toolBoxTranslationScreen: {
     backgroundColor: '#fff',
@@ -983,7 +990,7 @@ export const lightTheme = {
     borderColor: '#000',
     borderWidth: 1,
     padding: 15,
-    width: '45%',
+    width: width * 0.4,
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1075,17 +1082,20 @@ export const lightTheme = {
     marginBottom: 30,
   },
   buttonSettingsScreen: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
+    backgroundColor: '#fff',
     borderRadius: 10,
-    marginVertical: 10,
-    width: '80%',
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 20,
+    width: 250,
+    margin: 9,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    justifyContent: 'center',
     elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   buttonTextSettingsScreen: {
     fontSize: 18,
@@ -1104,7 +1114,8 @@ export const lightTheme = {
     borderBottomWidth: 1,
   },
   moveButton: {
-    marginHorizontal: 5,
+    marginHorizontal: 3,
+    color: 'black'
   },
   songContent: {
     flexDirection: 'row',
@@ -1384,7 +1395,6 @@ export const lightTheme = {
   },
 };
 
-// Create context with default standard theme
 export const ThemeContext = createContext({
   theme: standardTheme,
   setTheme: () => {},
@@ -1393,12 +1403,35 @@ export const ThemeContext = createContext({
 export const ThemeProvider = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState(standardTheme);
 
-  const setTheme = (theme) => {
-    setCurrentTheme(theme);
+  // Function to load theme from AsyncStorage
+  const loadTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('selectedTheme');
+      if (savedTheme) {
+        setCurrentTheme(JSON.parse(savedTheme));
+      }
+    } catch (error) {
+      console.error('Failed to load theme from storage', error);
+    }
   };
 
+  // Function to save theme to AsyncStorage
+  const saveTheme = async (theme) => {
+    try {
+      await AsyncStorage.setItem('selectedTheme', JSON.stringify(theme));
+      setCurrentTheme(theme);
+    } catch (error) {
+      console.error('Failed to save theme to storage', error);
+    }
+  };
+
+  // Load the theme when the component mounts
+  useEffect(() => {
+    loadTheme();
+  }, []);
+
   return (
-    <ThemeContext.Provider value={{ theme: currentTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme: currentTheme, setTheme: saveTheme }}>
       {children}
     </ThemeContext.Provider>
   );

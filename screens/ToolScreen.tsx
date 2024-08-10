@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native'; // Import ScrollView
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import MusicScreen from './tools/Music';
@@ -11,14 +11,14 @@ import TicTacToeScreen from './tools/TicTacToe';
 import TranslationTool from './tools/Translation';
 import OfflineMapScreen from './tools/Maps';
 
-import { ThemeContext, standardTheme, darkTheme, lightTheme } from './ThemeContext'; // Import themes
+import { ThemeContext } from './ThemeContext'; // Import themes
 
 const { width } = Dimensions.get('window');
 
 const ToolScreen: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<string | null>(null);
 
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const renderScreen = () => {
     switch (activeScreen) {
@@ -37,12 +37,12 @@ const ToolScreen: React.FC = () => {
       case 'Translation':
         return <TranslationTool />;
       case 'Maps':
-      return <OfflineMapScreen />;
+        return <OfflineMapScreen />;
       default:
         return (
           <View style={theme.containerTranslationScreen}>
             <Text style={theme.titleTranslationScreen}>Tools</Text>
-            <View style={theme.gridTranslationScreen}>
+            <ScrollView contentContainerStyle={theme.gridTranslationScreen}>
               <TouchableOpacity
                 style={theme.toolBoxTranslationScreen}
                 onPress={() => setActiveScreen('Music')}
@@ -91,7 +91,7 @@ const ToolScreen: React.FC = () => {
               >
                 <Text style={theme.toolTextTranslationScreen}>Maps</Text>
               </TouchableOpacity>
-            </View>
+            </ScrollView>
           </View>
         );
     }

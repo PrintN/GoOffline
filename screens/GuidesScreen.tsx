@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import FireMakingGuide from './guides/fire-making';
@@ -25,7 +25,7 @@ const GuidesScreen: React.FC = () => {
         return (
           <View style={theme.containerGuidesScreen}>
             <Text style={theme.titleGuidesScreen}>Guides</Text>
-            <View style={theme.gridGuidesScreen}>
+            <ScrollView contentContainerStyle={theme.gridTranslationScreen}>
               <TouchableOpacity
                 style={theme.guideBoxGuidesScreen}
                 onPress={() => setActiveScreen('Fire Making')}
@@ -44,7 +44,7 @@ const GuidesScreen: React.FC = () => {
               >
                 <Text style={theme.guideTextGuidesScreen}>Shelter Building</Text>
               </TouchableOpacity>
-            </View>
+            </ScrollView>
           </View>
         );
     }

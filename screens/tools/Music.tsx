@@ -247,14 +247,14 @@ const HomeScreen = () => {
         onPress={() => moveSong(index, 'up')}
         disabled={index === 0}
       >
-        <Ionicons name="arrow-up" size={24} color="white" />
+        <Ionicons name="arrow-up" size={24} style={theme.moveButton}/>
       </TouchableOpacity>
       <TouchableOpacity
         style={theme.moveButton}
         onPress={() => moveSong(index, 'down')}
         disabled={index === songs.length - 1}
       >
-        <Ionicons name="arrow-down" size={24} color="white" />
+        <Ionicons name="arrow-down" size={24} style={theme.moveButton}/>
       </TouchableOpacity>
       <TouchableOpacity
         style={theme.songContent}
